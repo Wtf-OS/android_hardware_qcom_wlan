@@ -139,6 +139,8 @@ typedef struct hal_info_s {
     int num_interfaces;                             // number of interfaces
 
     feature_set supported_feature_set;
+    bool feature_query_unsupported;
+    bool logger_query_unsupported;
     /* driver supported features defined by enum qca_wlan_vendor_features that
        can be queried by vendor command QCA_NL80211_VENDOR_SUBCMD_GET_FEATURES */
     features_info driver_supported_features;

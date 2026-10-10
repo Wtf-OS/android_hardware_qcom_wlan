@@ -227,6 +227,11 @@ wifi_error wifi_get_logger_supported_feature_set(wifi_interface_handle iface,
     struct nlattr *nlData;
     interface_info *ifaceInfo = getIfaceInfo(iface);
     wifi_handle wifiHandle = getWifiHandle(iface);
+    hal_info *info = getHalInfo(wifiHandle);
+    if (info->logger_query_unsupported) {
+        *support = 0;
+        return WIFI_ERROR_NOT_SUPPORTED;
+    }
 
     /* No request id from caller, so generate one and pass it on to the driver.
      * Generate one randomly.
@@ -269,6 +274,8 @@ wifi_error wifi_get_logger_supported_feature_set(wifi_interface_handle iface,
 
     /* Send the msg and wait for a response. */
     ret = wifiLoggerCommand->requestResponse();
+    if (ret == WIFI_ERROR_NOT_SUPPORTED)
+        info->logger_query_unsupported = true;
     if (ret != WIFI_SUCCESS)
         ALOGE("%s: Error %d happened. ", __FUNCTION__, ret);
 

@@ -2414,7 +2414,13 @@ wifi_error wifi_get_supported_feature_set(wifi_interface_handle iface,
     *set = 0;
     hal_info *info = getHalInfo(handle);
 
+    if (info->feature_query_unsupported) {
+        *set = info->supported_feature_set;
+        return WIFI_SUCCESS;
+    }
     ret = acquire_supported_features(iface, set);
+    if (ret == WIFI_ERROR_NOT_SUPPORTED)
+        info->feature_query_unsupported = true;
     if (ret != WIFI_SUCCESS) {
         *set = info->supported_feature_set;
         ALOGV("Supported feature set acquired at initialization : 0x%" PRIx64, *set);
